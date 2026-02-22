@@ -34,6 +34,13 @@ interface UserProfile {
   user_id: string
 }
 
+interface OverviewStats {
+  totalContent: number
+  monthViews: number
+  totalEngagement: number
+  submissions: number
+}
+
 export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
@@ -41,6 +48,13 @@ export default function AdminPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [activeTab, setActiveTab] = useState("content")
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+  const [overviewStats, setOverviewStats] = useState<OverviewStats>({
+    totalContent: 0,
+    monthViews: 0,
+    totalEngagement: 0,
+    submissions: 0,
+  })
+  const [overviewLoading, setOverviewLoading] = useState(true)
   const router = useRouter()
 
   const checkAdminStatus = useCallback(async () => {
@@ -73,6 +87,57 @@ export default function AdminPage() {
   useEffect(() => {
     checkAdminStatus()
   }, [checkAdminStatus])
+
+  useEffect(() => {
+    if (isLoggedIn && isAdmin) {
+      fetchOverviewStats()
+    }
+  }, [isLoggedIn, isAdmin])
+
+  async function fetchOverviewStats() {
+    setOverviewLoading(true)
+    try {
+      const supabase = createClient()
+
+      // Total published content
+      const { count: contentCount } = await supabase
+        .from("content")
+        .select("*", { count: "exact", head: true })
+        .eq("published", true)
+
+      // This month's views
+      const startOfMonth = new Date()
+      startOfMonth.setDate(1)
+      startOfMonth.setHours(0, 0, 0, 0)
+
+      const { count: monthViewCount } = await supabase
+        .from("analytics")
+        .select("*", { count: "exact", head: true })
+        .eq("event_type", "view")
+        .gte("created_at", startOfMonth.toISOString())
+
+      // Total engagement (all analytics events)
+      const { count: engagementCount } = await supabase
+        .from("analytics")
+        .select("*", { count: "exact", head: true })
+
+      // Total submissions
+      const { count: submissionCount } = await supabase
+        .from("submissions")
+        .select("*", { count: "exact", head: true })
+
+      setOverviewStats({
+        totalContent: contentCount || 0,
+        monthViews: monthViewCount || 0,
+        totalEngagement: engagementCount || 0,
+        submissions: submissionCount || 0,
+      })
+    } catch (err) {
+      console.error("Error fetching overview stats:", err)
+    } finally {
+      setOverviewLoading(false)
+    }
+  }
 
   async function handleLogout() {
     try {
@@ -326,10 +391,10 @@ export default function AdminPage() {
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                  { label: "Total Content", value: "—", icon: "📁", color: "from-orange-500/15 to-orange-500/5" },
-                  { label: "This Month Views", value: "—", icon: "👁️", color: "from-amber-500/15 to-amber-500/5" },
-                  { label: "Total Engagement", value: "—", icon: "✨", color: "from-emerald-500/15 to-emerald-500/5" },
-                  { label: "Submissions", value: "—", icon: "📬", color: "from-blue-500/15 to-blue-500/5" },
+                  { label: "Total Content", value: overviewLoading ? "..." : overviewStats.totalContent, icon: "📁", color: "from-orange-500/15 to-orange-500/5" },
+                  { label: "This Month Views", value: overviewLoading ? "..." : overviewStats.monthViews, icon: "👁️", color: "from-amber-500/15 to-amber-500/5" },
+                  { label: "Total Engagement", value: overviewLoading ? "..." : overviewStats.totalEngagement, icon: "✨", color: "from-emerald-500/15 to-emerald-500/5" },
+                  { label: "Submissions", value: overviewLoading ? "..." : overviewStats.submissions, icon: "📬", color: "from-blue-500/15 to-blue-500/5" },
                 ].map((stat, idx) => (
                   <Card key={idx} className={`bg-gradient-to-br ${stat.color} border-0`}>
                     <CardHeader className="pb-2">
