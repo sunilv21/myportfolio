@@ -26,6 +26,7 @@ export function SubmissionsViewer() {
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null)
+  const [statusFilter, setStatusFilter] = useState<string>("all")
   const supabase = createClient()
 
   useEffect(() => {
@@ -115,6 +116,17 @@ export function SubmissionsViewer() {
     return <div className="text-center py-12">Loading submissions...</div>
   }
 
+  const filteredSubmissions = statusFilter === "all"
+    ? submissions
+    : submissions.filter((s) => s.status === statusFilter)
+
+  const statusCounts = {
+    all: submissions.length,
+    new: submissions.filter((s) => s.status === "new").length,
+    read: submissions.filter((s) => s.status === "read").length,
+    replied: submissions.filter((s) => s.status === "replied").length,
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -125,11 +137,34 @@ export function SubmissionsViewer() {
         <p className="text-sm text-muted-foreground">Manage all contact forms and submissions from your website</p>
       </div>
 
-      {submissions.length === 0 ? (
+      {/* Status filter tabs */}
+      <div className="flex flex-wrap gap-2">
+        {(["all", "new", "read", "replied"] as const).map((status) => (
+          <button
+            key={status}
+            onClick={() => setStatusFilter(status)}
+            className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${
+              statusFilter === status
+                ? "bg-orange-500 text-white"
+                : "bg-background/50 border border-orange-500/20 text-muted-foreground hover:border-orange-400/40"
+            }`}
+          >
+            {status.charAt(0).toUpperCase() + status.slice(1)} ({statusCounts[status]})
+          </button>
+        ))}
+      </div>
+
+      {filteredSubmissions.length === 0 ? (
         <Card className="bg-background/50 border-orange-500/20">
           <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground mb-2">No submissions yet</p>
-            <p className="text-xs text-muted-foreground">When visitors submit the contact form, they'll appear here</p>
+            <p className="text-muted-foreground mb-2">
+              {statusFilter === "all" ? "No submissions yet" : `No ${statusFilter} submissions`}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {statusFilter === "all"
+                ? "When visitors submit the contact form, they'll appear here"
+                : "Try switching to a different filter"}
+            </p>
           </CardContent>
         </Card>
       ) : (
@@ -141,13 +176,14 @@ export function SubmissionsViewer() {
                   <TableHead className="w-24">Status</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
+                  <TableHead>Phone</TableHead>
                   <TableHead className="hidden md:table-cell">Message</TableHead>
                   <TableHead className="w-24">Date</TableHead>
                   <TableHead className="w-32">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {submissions.map((submission, idx) => (
+                {filteredSubmissions.map((submission, idx) => (
                   <motion.tr
                     key={submission.id}
                     initial={{ opacity: 0, y: -10 }}
@@ -158,6 +194,7 @@ export function SubmissionsViewer() {
                     <TableCell>{getStatusBadge(submission.status)}</TableCell>
                     <TableCell className="font-medium">{submission.name}</TableCell>
                     <TableCell className="text-sm text-muted-foreground">{submission.email}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">{submission.phone || "—"}</TableCell>
                     <TableCell className="hidden md:table-cell truncate text-sm max-w-xs">{submission.message}</TableCell>
                     <TableCell className="text-xs text-muted-foreground">
                       {new Date(submission.created_at).toLocaleDateString()}

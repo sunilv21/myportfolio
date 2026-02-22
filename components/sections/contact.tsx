@@ -6,7 +6,7 @@ import { Mail, Instagram, Loader2, Send, ArrowUpRight } from "lucide-react"
 import Image from "next/image"
 
 export function ContactSection() {
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" })
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" })
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState("")
@@ -23,6 +23,7 @@ export function ContactSection() {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
+          phone: formData.phone,
           message: formData.message,
           submission_type: "contact",
         }),
@@ -36,7 +37,7 @@ export function ContactSection() {
       }
 
       setSubmitted(true)
-      setFormData({ name: "", email: "", message: "" })
+      setFormData({ name: "", email: "", phone: "", message: "" })
       setTimeout(() => setSubmitted(false), 5000)
     } catch (err: any) {
       console.error("Form submission error:", err)
@@ -133,7 +134,7 @@ export function ContactSection() {
           ) : (
         <form onSubmit={handleSubmit} className="flex flex-col flex-1">
 
-      <div className="grid sm:grid-cols-2 gap-4 mb-6">
+      <div className="grid sm:grid-cols-3 gap-4 mb-6">
         <input
           type="text"
           placeholder="Your name"
@@ -154,6 +155,16 @@ export function ContactSection() {
           }
           className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/40 text-white/80 placeholder:text-white/70 text-sm focus:outline-none focus:border-orange-400/30 focus:ring-1 focus:ring-orange-400/10 transition-all duration-300"
           required
+        />
+
+        <input
+          type="tel"
+          placeholder="Phone number (optional)"
+          value={formData.phone}
+          onChange={(e) =>
+            setFormData({ ...formData, phone: e.target.value })
+          }
+          className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/40 text-white/80 placeholder:text-white/70 text-sm focus:outline-none focus:border-orange-400/30 focus:ring-1 focus:ring-orange-400/10 transition-all duration-300"
         />
       </div>
 
