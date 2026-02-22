@@ -145,7 +145,7 @@ export function AdminContentManager() {
         thumbnail_url: form.thumbnail_url,
         published: form.published,
         publish_date: form.published ? new Date().toISOString() : null,
-        slug: form.title.toLowerCase().replace(/\s+/g, "-"),
+        slug: form.title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "") + "-" + Date.now().toString(36),
       }
 
       if (editingId) {
