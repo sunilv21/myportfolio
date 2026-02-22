@@ -1,9 +1,9 @@
 "use client"
 
-import React from "react"
-import { useState } from "react"
+import React, { useState } from "react"
 import { motion } from "framer-motion"
-import { Mail, Instagram, MessageSquare, Loader2, Send, ArrowUpRight } from "lucide-react"
+import { Mail, Instagram, Loader2, Send, ArrowUpRight } from "lucide-react"
+import Image from "next/image"
 
 export function ContactSection() {
   const [formData, setFormData] = useState({ name: "", email: "", message: "" })
@@ -29,6 +29,7 @@ export function ContactSection() {
       })
 
       const result = await response.json()
+
       if (!response.ok) {
         setError(result.error || "Failed to send message")
         return
@@ -62,8 +63,8 @@ export function ContactSection() {
 
   return (
     <section id="contact" className="py-20 sm:py-28 px-4 sm:px-6 relative">
-      <div className="max-w-3xl mx-auto">
-        {/* Section header */}
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
         <motion.div
           className="text-center mb-14"
           initial={{ opacity: 0, y: 20 }}
@@ -82,12 +83,12 @@ export function ContactSection() {
           </p>
         </motion.div>
 
-        {/* Quick contact links */}
+        {/* Quick Links */}
         <motion.div
           className="flex flex-wrap gap-3 justify-center mb-12"
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
+          transition={{ duration: 0.5 }}
           viewport={{ once: true }}
         >
           {contactLinks.map((link) => (
@@ -98,97 +99,124 @@ export function ContactSection() {
               rel="noopener noreferrer"
               className="group flex items-center gap-3 px-5 py-3 rounded-xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm hover:border-orange-400/20 hover:bg-orange-500/[0.03] transition-all duration-300"
             >
-              <link.icon className="w-4 h-4 text-white/30 group-hover:text-orange-400/70 transition-colors" />
-              <span className="text-sm text-white/40 group-hover:text-white/70 transition-colors">{link.value}</span>
-              <ArrowUpRight className="w-3 h-3 text-white/15 group-hover:text-orange-400/50 transition-colors" />
+              <link.icon className="w-4 h-4 text-white/70 group-hover:text-blue-400/70 transition-colors" />
+              <span className="text-sm text-white/40 group-hover:text-white/70 transition-colors">
+                {link.value}
+              </span>
+              <ArrowUpRight className="w-3 h-3 text-white/15 group-hover:text-blue-400/50 transition-colors" />
             </a>
           ))}
         </motion.div>
 
-        {/* Contact form */}
+
+        {/* Grid Layout */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.15 }}
+          transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-        >
-          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6 sm:p-8">
-            {submitted ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-10"
+          className="grid md:grid-cols-2 gap-12 items-stretch"
+>
+          {/* Form Card */}
+        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-10 flex flex-col h-full">
+
+          {submitted ? (
+            <div className="flex flex-col items-center justify-center flex-1 text-center">
+              <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4">
+                <Send className="w-6 h-6 text-emerald-400" />
+              </div>
+              <p className="text-white/80 font-medium mb-1 text-lg">Message sent!</p>
+              <p className="text-white/40 text-sm font-light">
+                I'll get back to you soon.
+              </p>
+            </div>
+          ) : (
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1">
+
+      <div className="grid sm:grid-cols-2 gap-4 mb-6">
+        <input
+          type="text"
+          placeholder="Your name"
+          value={formData.name}
+          onChange={(e) =>
+            setFormData({ ...formData, name: e.target.value })
+          }
+          className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/40 text-white/80 placeholder:text-white/70 text-sm focus:outline-none focus:border-orange-400/30 focus:ring-1 focus:ring-orange-400/10 transition-all duration-300"
+          required
+        />
+
+        <input
+          type="email"
+          placeholder="Your email"
+          value={formData.email}
+          onChange={(e) =>
+            setFormData({ ...formData, email: e.target.value })
+          }
+          className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/40 text-white/80 placeholder:text-white/70 text-sm focus:outline-none focus:border-orange-400/30 focus:ring-1 focus:ring-orange-400/10 transition-all duration-300"
+          required
+        />
+      </div>
+
+              {/* FIXED MESSAGE BOX */}
+              <textarea
+                placeholder="Tell me about your project..."
+                rows={8}
+                value={formData.message}
+                onChange={(e) =>
+                  setFormData({ ...formData, message: e.target.value })
+                }
+                className="flex-1 min-h-[180px] px-4 py-4 rounded-xl bg-white/[0.03] border border-white/40 text-white/80 placeholder:text-white/70 text-sm focus:outline-none focus:border-orange-400/30 focus:ring-1 focus:ring-orange-400/10 transition-all duration-300 resize-none mb-6"
+                required
+              />
+
+              {error && (
+                <p className="text-red-400/80 text-xs bg-red-500/[0.06] border border-red-500/10 rounded-lg px-3 py-2 mb-4">
+                  {error}
+                </p>
+              )}
+
+              {/* Button pushed to bottom */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="mt-auto py-3 rounded-xl bg-orange-500 hover:bg-orange-400 text-white font-medium text-sm transition-all duration-300 shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-                  <Send className="w-5 h-5 text-emerald-400" />
-                </div>
-                <p className="text-white/70 font-medium mb-1">Message sent!</p>
-                <p className="text-white/30 text-sm font-light">I'll get back to you soon.</p>
-              </motion.div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[11px] uppercase tracking-wider text-white/20 font-medium mb-2">Name</label>
-                    <input
-                      type="text"
-                      placeholder="Your name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white/80 placeholder:text-white/15 text-sm focus:outline-none focus:border-orange-400/30 focus:ring-1 focus:ring-orange-400/10 transition-all duration-300"
-                      required
-                      disabled={loading}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] uppercase tracking-wider text-white/20 font-medium mb-2">Email</label>
-                    <input
-                      type="email"
-                      placeholder="Your email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white/80 placeholder:text-white/15 text-sm focus:outline-none focus:border-orange-400/30 focus:ring-1 focus:ring-orange-400/10 transition-all duration-300"
-                      required
-                      disabled={loading}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-[11px] uppercase tracking-wider text-white/20 font-medium mb-2">Message</label>
-                  <textarea
-                    placeholder="Tell me about your project..."
-                    rows={5}
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white/80 placeholder:text-white/15 text-sm focus:outline-none focus:border-orange-400/30 focus:ring-1 focus:ring-orange-400/10 transition-all duration-300 resize-none"
-                    required
-                    disabled={loading}
-                  />
-                </div>
-
-                {error && (
-                  <p className="text-red-400/80 text-xs bg-red-500/[0.06] border border-red-500/10 rounded-lg px-3 py-2">{error}</p>
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    Send Message
+                  </>
                 )}
+              </button>
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-3 rounded-xl bg-orange-500 hover:bg-orange-400 text-white font-medium text-sm transition-all duration-300 shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4" />
-                      Send Message
-                    </>
-                  )}
-                </button>
-              </form>
-            )}
+            </form>
+          )}
+        </div>
+
+          {/* Logo Card */}
+          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-8 flex items-center justify-center">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <div className="bg-white rounded-3xl p-10 shadow-[0_40px_100px_-20px_rgba(249,115,22,0.25)] transition-all duration-500">
+                <Image
+                  src="/Radsting.svg"
+                  alt="Radsting Dev"
+                  width={350}
+                  height={350}
+                  className="w-[320px] h-auto object-contain"
+                  priority
+                />
+              </div>
+            </motion.div>
           </div>
         </motion.div>
       </div>

@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Menu, X } from "lucide-react"
 
 export function Header() {
@@ -25,9 +26,13 @@ export function Header() {
       <nav className="relative max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-orange-500/20">
-              R
-            </div>
+            <Image 
+              src="/Radsting.svg" 
+              alt="Radsting Dev" 
+              width={32} 
+              height={32}
+              className="rounded-lg shadow-lg shadow-orange-500/20"
+            />
             <div className="flex flex-col">
               <span className="text-sm font-semibold text-white/90 leading-tight">Radsting Dev</span>
               <span className="text-[10px] text-white/30 leading-tight">by Sunil Verma</span>
@@ -57,7 +62,7 @@ export function Header() {
           >
             <Link
               href="/admin"
-              className="px-4 py-2 text-sm font-medium rounded-lg border border-white/[0.08] text-white/50 hover:text-orange-300 hover:border-orange-400/20 hover:bg-orange-500/5 transition-all duration-300"
+              className="px-4 py-2 text-sm font-medium rounded-lg border border-white/[0.08] text-white hover:text-orange-300 hover:border-orange-400/20 hover:bg-orange-500/5 transition-all duration-300"
             >
               Admin
             </Link>

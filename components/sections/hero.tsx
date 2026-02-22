@@ -38,8 +38,8 @@ export function HeroSection() {
       >
         {/* Status badge */}
         <motion.div variants={itemVariants} className="mb-8">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-widest uppercase border border-orange-400/20 bg-orange-500/5 text-orange-300 backdrop-blur-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-widest uppercase border border-orange-400/20 bg-orange-500/5 text-green-300 backdrop-blur-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
             Available for projects
           </span>
         </motion.div>
@@ -49,7 +49,7 @@ export function HeroSection() {
           className="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-bold mb-3 leading-[0.95] tracking-tight"
           variants={itemVariants}
         >
-          <span className="block text-white/90">Creative</span>
+          <span className="block text-white/90">Radsting</span>
           <span className="block bg-gradient-to-r from-orange-400 via-amber-300 to-orange-500 bg-clip-text text-transparent">
             Developer
           </span>

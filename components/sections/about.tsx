@@ -9,7 +9,7 @@ export function AboutSection() {
       icon: Code2,
       category: "Software Development",
       description: "Building modern web experiences",
-      items: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Web Apps"],
+      items: ["Python", "React", "Next.js", "TypeScript", "Tailwind CSS", "Web Apps", "Mobile Apps","Database Management", "Automation", "AI Integration"],
       accent: "from-orange-400 to-amber-500",
     },
     {
